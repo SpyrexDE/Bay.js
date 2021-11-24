@@ -1,0 +1,37 @@
+<template>
+  <div class="box">
+    <p><slot/></p>
+  </div>
+</template>
+  
+<style>
+  .box {
+    background: darkslategray;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 20px;
+    text-align: center;
+    width: 300px;
+    margin: 0 auto;
+    cursor: pointer;
+  }
+
+  .box p {
+    color: whitesmoke;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+</style>
+
+<script>
+  function onClick() {
+    alert( "Box was pressed" );
+  }
+  
+  function onMouseover() {
+    this.style.zoom = "1.1";
+  }
+
+  function onMouseleave() {
+    this.style.zoom = "0.9";
+  }
+</script>
