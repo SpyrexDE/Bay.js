@@ -30,10 +30,12 @@ export default {
 <td>
 
 ```js
-var total = 0;
+var data = {
+  clicks: 0
+}
 
-function increase() {
-  total += 1;
+function onClick() {
+  data.clicks += 1;
 }
 ```
 
@@ -53,6 +55,7 @@ Create your first component in a seperate html file:
 <template>
   <div class="box">
     <p><slot/></p>
+    <p> Your clicks: {{ clicks }}</p>
   </div>
 </template>
   
@@ -66,6 +69,13 @@ Create your first component in a seperate html file:
     width: 300px;
     margin: 0 auto;
     cursor: pointer;
+    user-select: none;
+    transform: scale(1);
+    transition: all 0.1s ease-out;
+  }
+
+  .box:active:hover {
+    transform: scale(0.98);
   }
 
   .box p {
@@ -75,17 +85,15 @@ Create your first component in a seperate html file:
 </style>
 
 <script>
-  function onClick() { // <- Events can be added by declaring a function with the name "on" + eventname. (case-insensitive)
-    alert( "Box was pressed" );
-  }
-  
-  function onMouseover() {
-    this.style.zoom = "1.1";
+
+  var data = {
+    clicks: 0
   }
 
-  function onMouseleave() {
-    this.style.zoom = "0.9";
+  function onClick() { // <- Events can be added by declaring a function with the name "on" + eventname. (case-insensitive)
+    data.clicks += 1;
   }
+
 </script>
 ```
 To register this component run:
