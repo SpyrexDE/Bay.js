@@ -105,8 +105,27 @@ Bay.loadComponent = ( function() {
 				if(shadow.innerHTML != htmlLines.join("\n")) {
 					shadow.innerHTML = htmlLines.join("\n");
 				}
-				
 
+				// Add attributes to data
+				for(var i = 0; i < this.attributes.length; i++) {
+					const attribute = this.attributes[i];
+					if (attribute.name.startsWith(":")) {
+						const types = ["Number", "BigInt", "Symbol", "String", "Boolean"]
+						let v = attribute.value;
+
+						for(var k = 0; k < types.length; k++) {
+							try {
+								console.log("new " + types[i] + "(" + v + ")")
+								v = eval("new " + types[i] + "(" + v + ")");
+
+							} catch(Excention) { /*ignore */}
+						}						
+
+						data[attribute.name.replace(":", "")] = v;
+					}
+				}
+				
+				// Register getters and setters for data vars
 				Object.keys(data).forEach( ( key ) => {
 
 					Object.defineProperty(data, "_" + key, {
