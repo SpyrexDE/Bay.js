@@ -62,29 +62,111 @@ Bay.loadComponent = ( function() {
 	}
 
 	function registerComponent( { template, style, name, listeners, script } ) {
-		class UnityComponent extends HTMLElement {
+		class BayComponent extends HTMLElement {
 			connectedCallback() {
-				this._upcast();
+				// Load in component's script
+				window.eval(script.textContent);
+				this.data = data;
+
+				this._attachShadowRoot();
+				this._registerData(script.textContent);
 				this._attachListeners(script.textContent);
+
+				this.updateVariables();
 			}
 
-			_upcast() {
-				const shadow = this.attachShadow( { mode: 'open' } );
-
-				shadow.appendChild( style.cloneNode( true ) );
-				shadow.appendChild( document.importNode( template.content, true ) );
+			_attachShadowRoot() {
+				this.shadow = this.attachShadow( { mode: 'open' } );
+				this.shadow.appendChild( style.cloneNode( true ) );
+				this.shadow.appendChild( document.importNode( template.content, true ) );
 			}
 
-			_attachListeners(script) {
-				window.eval(script);
+			_registerData() {
+				let shadow = this.shadow;
+				let o = this;
 
+				// Replace vars with var tags
+				let html = shadow.innerHTML;
+				var htmlLines = html.split("\n");
+
+				for (var i = 0; i < htmlLines.length; i++){
+					let line = htmlLines[i];
+
+					if(line.includes("{{") && line.includes("}}")) {
+						let varName = line.substring(
+							line.indexOf("{{") + 2, 
+							line.lastIndexOf("}}")
+						);
+						line = line.replaceAll("{{" + varName + "}}", "<variable " + varName.replaceAll(" ", "") + "></variable>");
+					}
+					htmlLines[i] = line;
+				}
+
+				if(shadow.innerHTML != htmlLines.join("\n")) {
+					shadow.innerHTML = htmlLines.join("\n");
+				}
+				
+
+				Object.keys(data).forEach( ( key ) => {
+
+					Object.defineProperty(data, "_" + key, {
+
+						value: this.data[key],
+						writable: true,
+						enumerable: true,
+						configurable: true,
+
+					});
+
+					Object.defineProperty(data, key, {
+
+						get () {
+							return this["_" + key];
+						},
+
+						set(value) {
+							this["_" + key] = value;
+							
+							o.updateVariables(key);
+						}
+					});
+				} );
+			}
+
+			updateVariables(key) {
+				if (key == undefined) {
+					Object.keys(data).forEach( ( key ) => {
+						this.updateVariables(key);
+					});
+				}
+
+				let shadow = this.shadow;
+				let els = [];
+
+				for(var i = 0; i < shadow.children.length; i++) {
+					let vars = shadow.children[i].getElementsByTagName("variable");
+					
+					for(var k = 0; k < vars.length; k++) {
+						els.push(vars[k]);
+					}
+				}
+				
+				for(var i = 0; i < els.length; i++) {
+					let el = els[i];
+					if(el.attributes[0].name == key) {
+						el.innerText = data[key];
+					}
+				}
+			}
+
+			_attachListeners() {
 				Object.keys(listeners).forEach( ( event ) => {
 					this.addEventListener( event, window[listeners[event]], false );
 				} );
 			}
 		}
 
-		return customElements.define( name, UnityComponent );
+		return customElements.define( name, BayComponent );
 	}
 
 	function loadComponent( URL ) {

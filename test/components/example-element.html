@@ -1,6 +1,7 @@
 <template>
   <div class="box">
     <p><slot/></p>
+    <p> Your clicks: {{ clicks }}</p>
   </div>
 </template>
   
@@ -14,6 +15,13 @@
     width: 300px;
     margin: 0 auto;
     cursor: pointer;
+    user-select: none;
+    transform: scale(1);
+    transition: all 0.1s ease-out;
+  }
+
+  .box:active:hover {
+    transform: scale(0.98);
   }
 
   .box p {
@@ -23,15 +31,13 @@
 </style>
 
 <script>
-  function onClick() {
-    alert( "Box was pressed" );
-  }
-  
-  function onMouseover() {
-    this.style.zoom = "1.1";
+
+  var data = {
+    clicks: 0
   }
 
-  function onMouseleave() {
-    this.style.zoom = "0.9";
+  function onClick() {
+    data.clicks += 1;
   }
+
 </script>
