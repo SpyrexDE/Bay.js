@@ -105,4 +105,4 @@ The element's tag is named the same as the file. You can use it like this:
 ```html
 <example-element :clicks=10>This text will be inserted where the slot tag in the template was placed.</example-element>
 ```
-The `:`-attributes create or overwrite the initial values from `data`.
+The `:`-attributes create or overwrite the initial values of the `data` object.
