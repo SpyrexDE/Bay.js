@@ -39,7 +39,9 @@ Bay.loadComponent = ( function() {
 				style
 			}
 		
-		script = script.textContent;
+		// Set script to textContent, remove comments
+		script = script.textContent.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g,'');
+
 		const jsFile = new Blob( [ script ], { type: 'application/javascript' } );
 		const jsURL = URL.createObjectURL( jsFile );
 
@@ -49,9 +51,6 @@ Bay.loadComponent = ( function() {
 			var lines = script.split("\n");
 			for(i=0; i < lines.length; i++)
 			{
-				if(lines[i] == "")
-					continue;
-
 				if(!lines[i].includes("function on"))
 					continue;
 				
@@ -78,10 +77,8 @@ Bay.loadComponent = ( function() {
 
 				// Load in component's script
 				window.eval(script);
-
-				if (typeof data !== 'undefined') {
-					this.data = data;
-				}
+				this._registerFunctions(script);
+				this._registerVariables(script);
 
 				this._addAttributesToData();
 
@@ -91,6 +88,38 @@ Bay.loadComponent = ( function() {
 					this.updateVariables();
 				} else {
 					this._attachListeners(script);
+				}
+			}
+
+			_registerFunctions(script) {
+
+				var lines = script.split("\n");
+				for(i=0; i < lines.length; i++)
+				{
+					if(!lines[i].includes("function"))
+						continue;
+					
+					this[lines[i].split("function ")[1].split("(")[0]] = eval(lines[i].split("function ")[1].split("(")[0]);
+				}
+			}
+
+			_registerVariables(script) {
+
+				var lines = script.split("\n");
+				for(i=0; i < lines.length; i++)
+				{
+					const keywords = ["let", "var", "const"];
+					
+					keywords.forEach((keyword) => {
+						if(!lines[i].includes(keyword))
+							return;
+						
+						// If variable is defined
+						if(lines[i].includes("=")){
+							const varName = lines[i].split(keyword + " ")[1].split("=")[0].replaceAll(" ", "");
+							this[varName] = eval(varName);
+						}
+					})
 				}
 			}
 
@@ -204,7 +233,7 @@ Bay.loadComponent = ( function() {
 
 			_attachListeners() {
 				Object.keys(listeners).forEach( ( event ) => {
-					this.addEventListener( event, window[listeners[event]], false );
+					this.addEventListener( event, this[listeners[event]], false );
 				} );
 			}
 		}
