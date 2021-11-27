@@ -1,6 +1,6 @@
 # Bay.js
 Bay.is is a *vanilla* javascript framework for educational and personal purposes.
-Special about this framework is it's module's script handling. Instead of adding all functions and variables to a giant export default object, in Bay.js you can write your code like in normal script tags within a plain html file. **No NodeJS needed!**
+Special about this framework is its module's script handling. Instead of adding all functions and variables to a giant export default object, in Bay.js you can write your code like in normal script tags within a plain html file. **No NodeJS or js packaging needed!**
 
 ## Syntax Comparison
 <table align="center">
@@ -85,13 +85,30 @@ Create your first component in a seperate html file:
 </style>
 
 <script>
-
+  
+  // All reactive variables have to be declared within the 'data' object
   var data = {
     clicks: 0
   }
 
-  function onClick() { // <- Events can be added by declaring a function with the name "on" + eventname. (case-insensitive)
+  // All events can be added by declaring a function with the name "on" + event name (case-insensitive)
+  function onClick() {
     data.clicks += 1;
+  }
+
+  // All setters for data-variables can be added by declaring a function with the name "$_" + variable name (case-sensitive)
+  function $_clicks(val) {
+    console.log("Variable 'clicks' has been changed! Requested new value: " + val)
+
+    if (val > 100) {
+      // By returning "prevent_default", the value won't change
+      return "prevent_default";
+    } else if (val > 20) {
+      // By returning a value the value will change to the given value
+      return val*2;             
+    }
+    // By returning the val-variable the value of the variable will get updated to the new value
+    return val;
   }
 
 </script>
@@ -105,4 +122,9 @@ The element's tag is named the same as the file. You can use it like this:
 ```html
 <example-element :clicks=10>This text will be inserted where the slot tag in the template was placed.</example-element>
 ```
-The `:`-attributes create or overwrite the initial values of the `data` object.
+The `:`-attributes create or overwrite the initial values of the `data` object. In this case, the initial value of the `clicks` variable (0) gets overwritten by 10. Because of that the counter of the button will start at 10 instead of 0.
+
+<h5><samp>Thanks for reading!</samp></h5>
+
+
+## Contributions are welcome!
