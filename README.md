@@ -47,7 +47,7 @@ function onClick() {
 
 Import the library:
 ```html
-<script src="https://raw.githubusercontent.com/SpyrexDE/Bay.js/main/src/Bay.js"></script>
+<script src="https://spyrexde.github.io/Bay.js/src/Bay.js"></script>
 ```
 
 Create your first component in a seperate html file:
