@@ -64,21 +64,51 @@ Bay.loadComponent = ( function() {
 	function registerComponent( { template, style, name, listeners, script } ) {
 		class BayComponent extends HTMLElement {
 			connectedCallback() {
+				this._attachShadowRoot();
+
 				// Load in component's script
 				window.eval(script.textContent);
-				this.data = data;
 
-				this._attachShadowRoot();
-				this._registerData(script.textContent);
-				this._attachListeners(script.textContent);
+				if (typeof data !== 'undefined') {
+					this.data = data;
+				}
 
-				this.updateVariables();
+				this._addAttributesToData();
+
+				if (typeof this.data !== 'undefined') {
+					this._registerData(script.textContent);
+					this._attachListeners(script.textContent);
+					this.updateVariables();
+				} else {
+					this._attachListeners(script.textContent);
+				}
 			}
 
 			_attachShadowRoot() {
 				this.shadow = this.attachShadow( { mode: 'open' } );
 				this.shadow.appendChild( style.cloneNode( true ) );
 				this.shadow.appendChild( document.importNode( template.content, true ) );
+			}
+
+			_addAttributesToData() {
+				if(this.attributes.length > 0 && typeof data === 'undefined')
+					this.data = {}
+				for(var i = 0; i < this.attributes.length; i++) {
+					const attribute = this.attributes[i];
+					if (attribute.name.startsWith(":")) {
+						const types = ["Number", "BigInt", "Symbol", "String", "Boolean"]
+						let v = attribute.value;
+
+						for(var k = 0; k < types.length; k++) {
+							try {
+								v = eval("new " + types[i] + "(" + v + ")");
+
+							} catch(Excention) { /*ignore */}
+						}						
+
+						this.data[attribute.name.replace(":", "")] = v;
+					}
+				}
 			}
 
 			_registerData() {
@@ -105,30 +135,11 @@ Bay.loadComponent = ( function() {
 				if(shadow.innerHTML != htmlLines.join("\n")) {
 					shadow.innerHTML = htmlLines.join("\n");
 				}
-
-				// Add attributes to data
-				for(var i = 0; i < this.attributes.length; i++) {
-					const attribute = this.attributes[i];
-					if (attribute.name.startsWith(":")) {
-						const types = ["Number", "BigInt", "Symbol", "String", "Boolean"]
-						let v = attribute.value;
-
-						for(var k = 0; k < types.length; k++) {
-							try {
-								console.log("new " + types[i] + "(" + v + ")")
-								v = eval("new " + types[i] + "(" + v + ")");
-
-							} catch(Excention) { /*ignore */}
-						}						
-
-						data[attribute.name.replace(":", "")] = v;
-					}
-				}
 				
 				// Register getters and setters for data vars
-				Object.keys(data).forEach( ( key ) => {
+				Object.keys(this.data).forEach( ( key ) => {
 
-					Object.defineProperty(data, "_" + key, {
+					Object.defineProperty(this.data, "_" + key, {
 
 						value: this.data[key],
 						writable: true,
@@ -137,7 +148,7 @@ Bay.loadComponent = ( function() {
 
 					});
 
-					Object.defineProperty(data, key, {
+					Object.defineProperty(this.data, key, {
 
 						get () {
 							return this["_" + key];
@@ -154,7 +165,7 @@ Bay.loadComponent = ( function() {
 
 			updateVariables(key) {
 				if (key == undefined) {
-					Object.keys(data).forEach( ( key ) => {
+					Object.keys(this.data).forEach( ( key ) => {
 						this.updateVariables(key);
 					});
 				}
@@ -173,7 +184,7 @@ Bay.loadComponent = ( function() {
 				for(var i = 0; i < els.length; i++) {
 					let el = els[i];
 					if(el.attributes[0].name == key) {
-						el.innerText = data[key];
+						el.innerText = this.data[key];
 					}
 				}
 			}
