@@ -40,4 +40,14 @@
     data.clicks += 1;
   }
 
+  function $_clicks(val) {
+    console.log("Variable 'clicks' has been changed! Requested new value: " + val);
+
+    if (val > 100) {
+      return "prevent_default";
+    } else if (val > 20) {
+      return val*2;
+    }
+  }
+
 </script>

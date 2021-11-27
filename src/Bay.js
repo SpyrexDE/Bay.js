@@ -193,10 +193,29 @@ Bay.loadComponent = ( function() {
 					Object.defineProperty(this.data, key, {
 
 						get () {
+							if (typeof o["$$_" + key] !== 'undefined') {
+								const newVal = o["$$_" + key](this["_" + key]);
+								switch(newVal)
+								{
+									case undefined: break;
+									case "prevent_default": return;
+									default: return newVal;
+								}
+							}
 							return this["_" + key];
 						},
 
 						set(value) {
+							if (typeof o["$_" + key] !== 'undefined') {
+								const newVal = o["$_" + key](value);
+								switch(newVal)
+								{
+									case undefined: break;
+									case "prevent_default": return;
+									default: this["_" + key] = newVal; o.updateVariables(key); return;
+								}
+							}
+
 							this["_" + key] = value;
 							
 							o.updateVariables(key);
