@@ -2,7 +2,7 @@
 ![](https://img.shields.io/badge/HTML-red?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-blue?&style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/Vanilla&nbsp;JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 
 Bay.is is a *vanilla* javascript framework for educational and personal purposes.
-Special about this framework is its module's script handling. Instead of adding all functions and variables to a giant export default object, in Bay.js you can write your code like in normal script tags within a plain html file. **No NodeJS or js packaging needed!**
+Special about this framework is its module's script handling. Instead of adding all functions and variables to a giant export default object, in Bay.js you can write your code like in normal script tags within a plain html file. **No NodeJS, other frameworks or js packaging needed!**
 
 ## Syntax Comparison
 <table align="center">
