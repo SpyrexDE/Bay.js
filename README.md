@@ -1,4 +1,6 @@
 # Bay.js
+![](https://img.shields.io/badge/HTML-red?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-blue?&style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/Vanilla&nbsp;JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+
 Bay.is is a *vanilla* javascript framework for educational and personal purposes.
 Special about this framework is its module's script handling. Instead of adding all functions and variables to a giant export default object, in Bay.js you can write your code like in normal script tags within a plain html file. **No NodeJS or js packaging needed!**
 
@@ -111,6 +113,10 @@ Create your first component in a seperate html file:
     return val;
   }
 
+  // Getters for data-variables can added work the same way as setters, but use a different function naming: "$$_" + variable name (case-sensitive)
+  // e.g. function $$_clicks(val)
+  // Be aware: Only access the value by the val argument, otherwise a endless loop will be created.
+  
 </script>
 ```
 To register this component run:
@@ -125,6 +131,3 @@ The element's tag is named the same as the file. You can use it like this:
 The `:`-attributes create or overwrite the initial values of the `data` object. In this case, the initial value of the `clicks` variable (0) gets overwritten by 10. Because of that the counter of the button will start at 10 instead of 0.
 
 <h5><samp>Thanks for reading!</samp></h5>
-
-
-## Contributions are welcome!
