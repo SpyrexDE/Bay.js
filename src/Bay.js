@@ -167,7 +167,7 @@ Bay.loadComponent = ( function() {
 					if(line.includes("{{") && line.includes("}}")) {
 						let varName = line.substring(
 							line.indexOf("{{") + 2, 
-							line.lastIndexOf("}}")
+							line.indexOf("}}")
 						);
 						line = line.replaceAll("{{" + varName + "}}", "<variable " + varName.replaceAll(" ", "") + "></variable>");
 					}
@@ -197,7 +197,6 @@ Bay.loadComponent = ( function() {
 								const newVal = o["$$_" + key](this["_" + key]);
 								switch(newVal)
 								{
-									case undefined: break;
 									case "prevent_default": return;
 									default: return newVal;
 								}
@@ -210,7 +209,6 @@ Bay.loadComponent = ( function() {
 								const newVal = o["$_" + key](value);
 								switch(newVal)
 								{
-									case undefined: break;
 									case "prevent_default": return;
 									default: this["_" + key] = newVal; o.updateVariables(key); return;
 								}
