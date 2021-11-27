@@ -30,13 +30,23 @@ Bay.loadComponent = ( function() {
 	}
 
 	function getSettings( { name, template, style, script } ) {
-		const jsFile = new Blob( [ script.textContent ], { type: 'application/javascript' } );
+		if(!script)
+			return{
+				name,
+				script: "",
+				listeners: {},
+				template,
+				style
+			}
+		
+		script = script.textContent;
+		const jsFile = new Blob( [ script ], { type: 'application/javascript' } );
 		const jsURL = URL.createObjectURL( jsFile );
 
 		function getListeners( script ) {
 			var listeners = {};
 
-			var lines = script.textContent.split("\n");
+			var lines = script.split("\n");
 			for(i=0; i < lines.length; i++)
 			{
 				if(lines[i] == "")
@@ -67,7 +77,7 @@ Bay.loadComponent = ( function() {
 				this._attachShadowRoot();
 
 				// Load in component's script
-				window.eval(script.textContent);
+				window.eval(script);
 
 				if (typeof data !== 'undefined') {
 					this.data = data;
@@ -76,17 +86,20 @@ Bay.loadComponent = ( function() {
 				this._addAttributesToData();
 
 				if (typeof this.data !== 'undefined') {
-					this._registerData(script.textContent);
-					this._attachListeners(script.textContent);
+					this._registerData(script);
+					this._attachListeners(script);
 					this.updateVariables();
 				} else {
-					this._attachListeners(script.textContent);
+					this._attachListeners(script);
 				}
 			}
 
 			_attachShadowRoot() {
 				this.shadow = this.attachShadow( { mode: 'open' } );
-				this.shadow.appendChild( style.cloneNode( true ) );
+
+				if(style)
+					this.shadow.appendChild( style.cloneNode( true ) );
+				
 				this.shadow.appendChild( document.importNode( template.content, true ) );
 			}
 
