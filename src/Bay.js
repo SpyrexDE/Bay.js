@@ -49,7 +49,7 @@ Bay.loadComponent = ( function() {
 			var listeners = {};
 
 			var lines = script.split("\n");
-			for(i=0; i < lines.length; i++)
+			for(var i=0; i < lines.length; i++)
 			{
 				if(!lines[i].includes("function on"))
 					continue;
@@ -94,7 +94,7 @@ Bay.loadComponent = ( function() {
 			_registerFunctions(script) {
 
 				var lines = script.split("\n");
-				for(i=0; i < lines.length; i++)
+				for(var i=0; i < lines.length; i++)
 				{
 					if(!lines[i].includes("function"))
 						continue;
@@ -106,7 +106,7 @@ Bay.loadComponent = ( function() {
 			_registerVariables(script) {
 
 				var lines = script.split("\n");
-				for(i=0; i < lines.length; i++)
+				for(var i=0; i < lines.length; i++)
 				{
 					const keywords = ["let", "var", "const"];
 					
