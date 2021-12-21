@@ -3,11 +3,6 @@ var Bay = {};
 Bay.loadComponent = ( function() { 
 	function fetchAndParse( URL ) {
 
-		// Load dictionary
-		if(!URL.endsWith(".html")) {
-			// TODO - Seem like it's not possibile in plain js ._.
-		}
-
 		return fetch( URL ).then( ( response ) => {
 			return response.text();
 		} ).then( ( html ) => {
