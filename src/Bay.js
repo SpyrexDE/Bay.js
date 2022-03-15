@@ -178,47 +178,50 @@ Bay.loadComponent = ( function() {
 				
 				// Register getters and setters for data vars
 				Object.keys(this.data).forEach( ( key ) => {
-
-					Object.defineProperty(this.data, "_" + key, {
-
-						value: this.data[key],
-						writable: true,
-						enumerable: true,
-						configurable: true,
-
-					});
-
-					Object.defineProperty(this.data, key, {
-
-						get () {
-							if (typeof o["$$_" + key] !== 'undefined') {
-								const newVal = o["$$_" + key](this["_" + key]);
-								switch(newVal)
-								{
-									case "prevent_default": return;
-									default: return newVal;
-								}
-							}
-							return this["_" + key];
-						},
-
-						set(value) {
-							if (typeof o["$_" + key] !== 'undefined') {
-								const newVal = o["$_" + key](value);
-								switch(newVal)
-								{
-									case "prevent_default": return;
-									default: this["_" + key] = newVal; o.updateVariables(key); return;
-								}
-							}
-
-							this["_" + key] = value;
-							
-							o.updateVariables(key);
-						}
-					});
+                    this.registerVar(key)
 				} );
 			}
+
+            registerVar(key) {
+                Object.defineProperty(this.data, "_" + key, {
+
+                    value: this.data[key],
+                    writable: true,
+                    enumerable: true,
+                    configurable: true,
+
+                });
+
+                Object.defineProperty(this.data, key, {
+
+                    get () {
+                        if (typeof o["$$_" + key] !== 'undefined') {
+                            const newVal = o["$$_" + key](this["_" + key]);
+                            switch(newVal)
+                            {
+                                case "prevent_default": return;
+                                default: return newVal;
+                            }
+                        }
+                        return this["_" + key];
+                    },
+
+                    set(value) {
+                        if (typeof o["$_" + key] !== 'undefined') {
+                            const newVal = o["$_" + key](value);
+                            switch(newVal)
+                            {
+                                case "prevent_default": return;
+                                default: this["_" + key] = newVal; o.updateVariables(key); return;
+                            }
+                        }
+
+                        this["_" + key] = value;
+                        
+                        o.updateVariables(key);
+                    }
+                });
+            }
 
 			updateVariables(key) {
 				if (key == undefined) {
@@ -245,6 +248,11 @@ Bay.loadComponent = ( function() {
 					}
 				}
 			}
+
+            addData(key, value) {
+                this.data[key] = value;
+                this.registerVar(key);
+            }
 
 			_attachListeners() {
 				Object.keys(listeners).forEach( ( event ) => {
