@@ -71,6 +71,8 @@ Bay.loadComponent = ( function() {
 	function registerComponent( { template, style, name, listeners, script, extending_class } ) {
 		class BayComponent extends extending_class {
 			connectedCallback() {
+                this.data = {}
+
 				this._attachShadowRoot();
 
 				// Load in component's script
@@ -131,8 +133,6 @@ Bay.loadComponent = ( function() {
 			}
 
 			_addAttributesToData() {
-				if(this.attributes.length > 0 && typeof data === 'undefined')
-					this.data = {}
 				for(var i = 0; i < this.attributes.length; i++) {
 					const attribute = this.attributes[i];
 					if (attribute.name.startsWith(":")) {
