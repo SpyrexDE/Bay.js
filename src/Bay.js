@@ -32,7 +32,8 @@ Bay.loadComponent = ( function() {
 				script: "",
 				listeners: {},
 				template,
-				style
+				style,
+                extending_class
 			}
 		
 		// Set script to textContent, remove comments
