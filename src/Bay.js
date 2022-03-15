@@ -252,6 +252,7 @@ Bay.loadComponent = ( function() {
             addData(key, value) {
                 this.data[key] = value;
                 this.registerVar(key);
+                this.updateVariables(key);
             }
 
 			_attachListeners() {
