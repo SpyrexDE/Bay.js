@@ -69,9 +69,6 @@ Bay.loadComponent = ( function() {
 
 	function registerComponent( { template, style, name, listeners, script, extending_class } ) {
 		class BayComponent extends extending_class {
-            constructor(...args) {
-                super(...args);
-            }
 			connectedCallback() {
 				this._attachShadowRoot();
 
