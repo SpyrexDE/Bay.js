@@ -153,7 +153,6 @@ Bay.loadComponent = ( function() {
 
 			_registerData() {
 				let shadow = this.shadow;
-				let o = this;
 
 				// Replace vars with var tags
 				let html = shadow.innerHTML;
@@ -183,6 +182,7 @@ Bay.loadComponent = ( function() {
 			}
 
             registerVar(key) {
+                let o = this;
                 Object.defineProperty(this.data, "_" + key, {
 
                     value: this.data[key],
