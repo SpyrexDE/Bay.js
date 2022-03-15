@@ -1,7 +1,7 @@
 var Bay = {};
 
 Bay.loadComponent = ( function() { 
-	function fetchAndParse( URL ) {
+	function fetchAndParse( URL, extending_class ) {
 
 		return fetch( URL ).then( ( response ) => {
 			return response.text();
@@ -19,12 +19,13 @@ Bay.loadComponent = ( function() {
 				name,
 				template,
 				style,
-				script
+				script,
+                extending_class
 			};
 		} );
 	}
 
-	function getSettings( { name, template, style, script } ) {
+	function getSettings( { name, template, style, script, extending_class } ) {
 		if(!script)
 			return{
 				name,
@@ -61,12 +62,16 @@ Bay.loadComponent = ( function() {
 				script,
 				listeners,
 				template,
-				style
+				style,
+                extending_class
 		}
 	}
 
-	function registerComponent( { template, style, name, listeners, script } ) {
-		class BayComponent extends HTMLElement {
+	function registerComponent( { template, style, name, listeners, script, extending_class } ) {
+		class BayComponent extends extending_class {
+            constructor() {
+                super()
+            }
 			connectedCallback() {
 				this._attachShadowRoot();
 
@@ -250,11 +255,11 @@ Bay.loadComponent = ( function() {
 			}
 		}
 
-		return customElements.define( name, BayComponent );
+		return customElements.define(name, BayComponent);
 	}
 
-	function loadComponent( URL ) {
-		return fetchAndParse( URL ).then( getSettings ).then( registerComponent );
+	function loadComponent( URL, extending_class = HTMLElement ) {
+        return fetchAndParse( URL, extending_class ).then( getSettings ).then( registerComponent );
 	}
 
 	return loadComponent;
