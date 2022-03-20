@@ -42,33 +42,16 @@ Bay.loadComponent = ( function() {
 		const jsFile = new Blob( [ script ], { type: 'application/javascript' } );
 		const jsURL = URL.createObjectURL( jsFile );
 
-		function getListeners( script ) {
-			var listeners = {};
-
-			var lines = script.split("\n");
-			for(var i=0; i < lines.length; i++)
-			{
-				if(!lines[i].includes("function on"))
-					continue;
-				
-				listeners[lines[i].split(" on")[1].split("(")[0].toLowerCase()] = "on" + lines[i].split(" on")[1].split("(")[0];
-			}
-			return listeners
-		}
-
-		const listeners = getListeners( script );
-
 		return{
 				name,
 				script,
-				listeners,
 				template,
 				style,
                 extending_class
 		}
 	}
 
-	function registerComponent( { template, style, name, listeners, script, extending_class } ) {
+	function registerComponent( { template, style, name, script, extending_class } ) {
 		class BayComponent extends extending_class {
 			connectedCallback() {
                 this.data = {}
@@ -76,51 +59,24 @@ Bay.loadComponent = ( function() {
 				this._attachShadowRoot();
 
 				// Load in component's script
-				window.eval(script);
-				this._registerFunctions(script);
-				this._registerVariables(script);
+				var source = new Function(script);
+                this.source = new source();
+
+				this._registerVariables();
 
 				this._addAttributesToData();
 
-				if (typeof this.data !== 'undefined') {
-					this._registerData(script);
-					this._attachListeners(script);
-					this.updateVariables();
-				} else {
-					this._attachListeners(script);
-				}
+				
+                this._registerData();
+                this._attachListeners();
+                this.updateVariables();
 			}
 
-			_registerFunctions(script) {
-
-				var lines = script.split("\n");
-				for(var i=0; i < lines.length; i++)
-				{
-					if(!lines[i].includes("function"))
-						continue;
-					
-					this[lines[i].split("function ")[1].split("(")[0]] = eval(lines[i].split("function ")[1].split("(")[0]);
-				}
-			}
-
-			_registerVariables(script) {
-
-				var lines = script.split("\n");
-				for(var i=0; i < lines.length; i++)
-				{
-					const keywords = ["let", "var", "const"];
-					
-					keywords.forEach((keyword) => {
-						if(!lines[i].includes(keyword))
-							return;
-						
-						// If variable is defined
-						if(lines[i].includes("=")){
-							const varName = lines[i].split(keyword + " ")[1].split("=")[0].replaceAll(" ", "");
-							this[varName] = eval(varName);
-						}
-					})
-				}
+			_registerVariables() {
+				for(var key in this.source)
+                {
+                    this[key] = this.source[key];
+                }
 			}
 
 			_attachShadowRoot() {
@@ -256,8 +212,14 @@ Bay.loadComponent = ( function() {
             }
 
 			_attachListeners() {
-				Object.keys(listeners).forEach( ( event ) => {
-					this.addEventListener( event, this[listeners[event]], false );
+                let listeners = [];
+                for(var key in this.source)
+                {
+                    if(key.startsWith("on"))
+                        listeners[key] = this.source[key]
+                }
+				Object.keys(listeners).forEach( ( func ) => {
+					this.addEventListener( func.replace("on", "").toLowerCase(), this[func], false );
 				} );
 			}
 		}

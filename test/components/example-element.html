@@ -32,15 +32,15 @@
 
 <script>
 
-  var data = {
+  this.data = {
     clicks: 0
   }
 
-  function onClick() {
-    data.clicks += 1;
+  this.onClick = function() {
+    this.data.clicks += 1;
   }
 
-  function $_clicks(val) {
+  this["$_clicks"] = function(val) {
     console.log("Variable 'clicks' has been changed! Requested new value: " + val);
 
     if (val > 100) {
