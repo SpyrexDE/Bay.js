@@ -60,6 +60,7 @@ Bay.loadComponent = ( function() {
 
 				// Load in component's script
 				var source = new Function(script);
+                this.source = new source();
 
 				this._registerVariables();
 
