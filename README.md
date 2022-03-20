@@ -32,11 +32,11 @@ export default {
 <td>
 
 ```js
-var data = {
+this.data = {
   clicks: 0
 }
 
-function onClick() {
+this.onClick = function () {
   data.clicks += 1;
 }
 ```
@@ -89,17 +89,17 @@ Create your first component in a seperate html file:
 <script>
   
   // All reactive variables have to be declared within the 'data' object
-  var data = {
+  this.data = {
     clicks: 0
   }
 
   // All events can be added by declaring a function with the name "on" + event name (case-insensitive)
-  function onClick() {
+  this.onClick = function() {
     data.clicks += 1;
   }
 
   // All setters for data-variables can be added by declaring a function with the name "$_" + variable name (case-sensitive)
-  function $_clicks(val) {
+  this["$_clicks"] = function() {
     console.log("Variable 'clicks' has been changed! Requested new value: " + val)
 
     if (val > 100) {
