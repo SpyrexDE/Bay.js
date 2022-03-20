@@ -77,6 +77,8 @@ Bay.loadComponent = ( function() {
                 {
                     this[key] = this.source[key];
                 }
+                if(this["init"])
+                    this.init();
 			}
 
 			_attachShadowRoot() {
