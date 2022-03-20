@@ -60,7 +60,6 @@ Bay.loadComponent = ( function() {
 
 				// Load in component's script
 				var source = new Function(script);
-                this.source = new source();
 
 				this._registerVariables();
 
@@ -70,6 +69,10 @@ Bay.loadComponent = ( function() {
                 this._registerData();
                 this._attachListeners();
                 this.updateVariables();
+                
+                // Call init() if exists
+                if(this["init"])
+                    this.init();
 			}
 
 			_registerVariables() {
@@ -77,8 +80,6 @@ Bay.loadComponent = ( function() {
                 {
                     this[key] = this.source[key];
                 }
-                if(this["init"])
-                    this.init();
 			}
 
 			_attachShadowRoot() {
