@@ -117,7 +117,7 @@ Bay.loadComponent = ( function() {
 				for (var i = 0; i < htmlLines.length; i++){
 					let line = htmlLines[i];
 
-					if(line.includes("{{") && line.includes("}}")) {
+					while (line.includes("{{") && line.includes("}}")) {
 						let varName = line.substring(
 							line.indexOf("{{") + 2, 
 							line.indexOf("}}")
