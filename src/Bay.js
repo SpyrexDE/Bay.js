@@ -56,7 +56,19 @@ Bay.loadComponent = ( function() {
 			connectedCallback() {
                 this.data = {}
 
-				this._attachShadowRoot();
+                if(style.hasAttribute("global")) {
+                    let slot_content = this.innerHTML;
+                    this.innerHTML = "";
+
+                    if(style)
+					    this.appendChild( style.cloneNode( true ) );
+				
+				    this.appendChild( document.importNode( template.content, true ) );
+                    console.log(this.children)
+                    this.getElementsByTagName("slot")[0].outerHTML = slot_content;
+                }
+				else
+                    this._attachShadowRoot();
 
 				// Load in component's script
 				var source = new Function(script);
@@ -112,7 +124,7 @@ Bay.loadComponent = ( function() {
 			}
 
 			_registerData() {
-				let shadow = this.shadow;
+				let shadow = this.shadow ?? this;
 
 				// Replace vars with var tags
 				let html = shadow.innerHTML;
@@ -190,7 +202,7 @@ Bay.loadComponent = ( function() {
 					});
 				}
 
-				let shadow = this.shadow;
+				let shadow = this.shadow ?? this;
 				let els = [];
 
 				for(var i = 0; i < shadow.children.length; i++) {
