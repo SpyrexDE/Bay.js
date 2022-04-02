@@ -57,6 +57,7 @@ Bay.loadComponent = ( function() {
                 this.data = {}
 
                 if(style.hasAttribute("global")) {
+                    // Store slot content
                     let slot_content = this.innerHTML;
                     this.innerHTML = "";
 
@@ -64,8 +65,10 @@ Bay.loadComponent = ( function() {
 					    this.appendChild( style.cloneNode( true ) );
 				
 				    this.appendChild( document.importNode( template.content, true ) );
-                    console.log(this.children)
-                    this.getElementsByTagName("slot")[0].outerHTML = slot_content;
+
+                    // Insert slot content
+                    if(this.getElementsByTagName("slot").length > 0)
+                        this.getElementsByTagName("slot")[0].outerHTML = slot_content;
                 }
 				else
                     this._attachShadowRoot();
