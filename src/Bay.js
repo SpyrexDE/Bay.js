@@ -56,7 +56,7 @@ Bay.loadComponent = ( function() {
 			connectedCallback() {
                 this.data = {}
 
-                if(style.hasAttribute("global")) {
+                if(!template.hasAttribute("shadowed")) {
                     // Store slot content
                     let slot_content = this.innerHTML;
                     this.innerHTML = "";
